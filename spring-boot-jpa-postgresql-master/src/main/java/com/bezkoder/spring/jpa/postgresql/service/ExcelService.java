@@ -46,6 +46,9 @@ public class ExcelService {
 
       for (int i = 1; i <= sheet.getLastRowNum(); i++) {
           Row row = sheet.getRow(i);
+          if (row == null || isRowEmpty(row)) {
+              continue;
+          }
           Map<String, String> rowData = new HashMap<>();
 
           for (int j = 0; j < row.getLastCellNum(); j++) {
@@ -72,6 +75,19 @@ public class ExcelService {
         workbook.close();
         return result.toString();
     }
+    
+    
+    private boolean isRowEmpty(Row row) {
+        for (int j = 0; j < row.getLastCellNum(); j++) {
+            Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            if (cell != null && cell.getCellType() != CellType.BLANK && !cell.toString().trim().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
 //    private void logProcess( String fileName, String status, String message) throws SQLException {
 //        String logSql = "INSERT INTO log_table (filename, status, message) VALUES (?, ?, ?)";
 //        try (PreparedStatement logStmt = connection.prepareStatement(logSql)) {
