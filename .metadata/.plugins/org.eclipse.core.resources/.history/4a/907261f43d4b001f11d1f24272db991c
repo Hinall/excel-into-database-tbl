@@ -1,0 +1,49 @@
+package com.bezkoder.spring.jpa.postgresql.controller;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.bezkoder.spring.jpa.postgresql.service.ExcelService;
+
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/excel")
+public class ExcellController {
+
+    @Autowired
+    private ExcelService excelService;
+
+  
+
+    @PostMapping("/upload")
+    public String uploadExcelFiles(@RequestParam("files") List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return "No files were uploaded.";
+        }
+
+        for (MultipartFile file : files) {
+            try {
+                // Ensure the file is not empty
+                if (!file.isEmpty()) {
+                    String jsonData = excelService.readExcelFile(file);
+                    excelService.saveJsonData(jsonData);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Failed to process file: " + file.getOriginalFilename();
+            }
+        }
+        return "Data from all uploaded files has been saved to the database.";
+    }
+}

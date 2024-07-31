@@ -1,0 +1,7 @@
+package com.bezkoder.spring.jpa.postgresql.service;
+
+public class SPUtility {
+	
+	public final static String  SAVE_EXCEL="select save_excel(?)";
+
+}
